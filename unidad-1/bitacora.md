@@ -3,17 +3,12 @@
 ## Bitácora de proceso de aprendizaje
 
 
-## Bitácora de aplicación 
-
-
-
-## Bitácora de reflexión
-
 **Actividad 01**
 
 **La aleatoriedad en el arte generativo**
 
 La aleatoriedad en el arte generativo es importante porque permite experimentar, salir del control total del autor y hacer que cada resultado sea distinto y único.
+
 
 **Actividad 02**
 
@@ -301,6 +296,8 @@ function draw() {
 
 <img width="777" height="384" alt="image" src="https://github.com/user-attachments/assets/f03cefb3-48dc-49b0-b4a6-574de5836d25" />
 
+## Bitácora de aplicación 
+
 **Actividad 07**
 
 **Creación de obra generativa**
@@ -380,13 +377,36 @@ class Walker {
 
 
 
+## Bitácora de reflexión
 
 
+**Actividad 08**
 
+**En tu bitácora de aprendizaje. Responde con tus propias palabras a las siguientes preguntas.**
 
+**Describe la diferencia fundamental entre la aleatoriedad generada por random() y la apariencia de aleatoriedad del Ruido Perlin (noise()). ¿En qué tipo de situación usarías cada una?**
 
+La diferencia es que random() genera valores totalmente independientes entre sí, es una aleatoriedad pura. Esto hace que los cambios sean bruscos y se perciban como saltos repentinos, sin continuidad. En cambio, noise() genera valores que cambian de forma suave y fluida; aunque parecen aleatorios, en realidad varían dentro de un cierto rango y están relacionados entre sí. Por eso, random() se usa cuando se busca un movimiento caótico o impredecible, mientras que noise() sirve para crear imágenes o movimientos más fluidos y naturales.
 
+**Explica con tus palabras qué es una distribución de probabilidad. ¿Qué diferencia visual produce una caminata aleatoria con una distribución uniforme versus una con una distribución normal?**
 
+Una distribución de probabilidad indica la probabilidad de que ocurran determinados valores dentro de un conjunto. En una distribución uniforme, todos los valores tienen la misma probabilidad, lo que generacambios mas aleatorios. En una distribución normal, los valores cercanos al promedio son más probables, produciendo movimientos más suaves y concentrados.
+
+**¿Cuál es el papel de la aleatoriedad en el arte generativo? Menciona al menos dos funciones distintas que cumple**
+
+- Introduce variación, evitando la repetición  de patrones y formas.
+
+- Aporta una apariencia más orgánica, similar a procesos naturales.
+
+- Permite que cada ejecución de la obra genere resultados únicos.
+
+**Piensa en tu obra final (Actividad 07). Describe uno de los conceptos de aleatoriedad que usaste y explica por qué fue una elección adecuada para lograr el efecto que buscabas.**
+
+En mi obra final usé la caminata aleatoria con tendencia hacia el mouse. Esto hizo que las partículas se movieran solas pero siempre fueran siguiendo el mouse. Me pareció adecuado porque daba un movimiento más dinámico y natural, como si las partículas  fueran peces persiguiendo un punto, parecia ser algo mas natural.
+
+**¿Qué es un “paseo” o “caminata” (walk) en el contexto de la simulación? ¿Qué característica particular tiene una caminata de tipo “Lévy flight”?**
+
+Una caminata es un modelo en el que un agente se mueve paso a paso siguiendo reglas que incluyen componentes aleatorios. Una caminata de tipo Lévy flight combina muchos pasos cortos con saltos  ocasionales, lo que permite explorar el espacio de manera más dinámica y mantiene una sensación de fluidez en el movimiento.
 
 
 
