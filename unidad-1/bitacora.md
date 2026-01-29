@@ -186,10 +186,127 @@ function draw() {
 
 <img width="795" height="441" alt="image" src="https://github.com/user-attachments/assets/9e16480c-2239-44f1-849d-d05f822ce7ea" />
 
+**Actividad 05**
+
+**Distribución personalizada: Lévy flight**
+
+**Crea un nuevo sketch en p5.js donde modifiques uno de los ejemplos anteriores y adiciones de Lévy flight.**
+
+**Explica por qué usaste esta técnica y qué resultados esperabas obtener.**
+
+Usé la técnica de Lévy flight porque permite modificar la caminata aleatoria tradicional introduciendo desplazamientos largos poco frecuentes. A diferencia de una caminata uniforme, donde todos los pasos tienen el mismo tamaño
+El resultado esperado es que el walker vaya dibujando su recorrido de manera progresiva y, de vez en cuando, realice saltos visibles a través del panel
+**Copia el código en tu bitácora.**
+
+```javascript
+let walker;
+
+function setup() {
+  createCanvas(640, 240);
+  walker = new Walker();
+  background(255);
+}
+
+function draw() {
+  walker.step();
+  walker.show();
+}
+
+class Walker {
+  constructor() {
+    this.x = width / 2;
+    this.y = height / 2;
+  }
+
+  show() {
+    stroke(0);
+    point(this.x, this.y);
+  }
+
+  step() {
+    let r = random(1);
+    let stepSize;
+
+    // Lévy flight: pasos largos raros
+    if (r < 0.01) {
+      stepSize = random(20, 80); // salto grande
+    } else {
+      stepSize = 1; // paso pequeño
+    }
+
+    let choice = floor(random(4));
+
+    if (choice == 0) {
+      this.x += stepSize;
+    } else if (choice == 1) {
+      this.x -= stepSize;
+    } else if (choice == 2) {
+      this.y += stepSize;
+    } else {
+      this.y -= stepSize;
+    }
+  }
+}
+```
+
+**Coloca en enlace a tu sketch en p5.js en tu bitácora.**
+
+[Codigo Ej 5 en p5.js](https://editor.p5js.org/Tomasm12/sketches/dbXYaTk8r)
+
+**Selecciona una captura de pantalla de tu sketch y colócala en tu bitácora.**
+
+<img width="782" height="303" alt="image" src="https://github.com/user-attachments/assets/3f84c2c6-3fb3-4a2e-9e91-5f823375d092" />
+
+
+**Actividad 06**
+
+**Ruido Perlin**
+
+**Crea un nuevo sketch en p5.js donde los visualices.**
+**Explica el concepto qué resultados esberabas obtener.**
+
+El ruido Perlin genera valores pseudoaleatorios que varían de forma continua en el tiempo. nos permite  controlar el tamaño de un objeto mostrando cómo puede producir cambios fluidos  y orgánicos.
+
+Resultados esperados:
+Se esperaba obtener una animación fluida donde el círculo cambiara de tamaño sin variaciones tan fuertes. El resultado es una forma que parece expandirse y contraerse de manera natural.
+
+**Copia el código en tu bitácora.**
+
+```javascript
+let t = 0;
+
+function setup() {
+  createCanvas(400, 400);
+  background(255);
+}
+
+function draw() {
+  background(255, 20);
+
+  let size = noise(t) * 200 + 20;
+
+  noFill();
+  stroke(0);
+  strokeWeight(2);
+  circle(width / 2, height / 2, size);
+
+  t += 0.01;
+}
+
+```
+
+**Coloca en enlace a tu sketch en p5.js en tu bitácora.**
+
+[Ej 6](https://editor.p5js.org/Tomasm12/sketches/-m8X7buiz)
+
+**Selecciona una captura de pantalla de tu sketch y colócala en tu bitácora.**
+
+<img width="777" height="384" alt="image" src="https://github.com/user-attachments/assets/f03cefb3-48dc-49b0-b4a6-574de5836d25" />
 
 **Actividad 07**
 
 **Creación de obra generativa**
+
 
 
 
