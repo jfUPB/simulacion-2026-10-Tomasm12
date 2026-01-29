@@ -307,9 +307,78 @@ function draw() {
 
 **Creación de obra generativa**
 
+**Un texto donde expliques el concepto de obra generativa.**
+
+Mi obra generativa consiste en un programa que crea partículas en el lienzo cada vez que hago clic con el mouse. Estas partículas se mueven de manera autónoma y siguen la posición del mouse, como si fueran peces siguiendo un punto de referencia.
+
+- Distribución Normal: Para que los tamaños de los puntos sean variados pero naturales.
+
+- Lévy Flight: Para que las partículas den saltos largos y no se queden amontonadas.
+
+- Caminata Aleatoria (con Tendencia): Para que las partículas sigan al mouse.
+
+Copia el código en tu bitácora.
+
+```java script
+let walkers = [];
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(0);
+}
+
+function draw() {
+  background(0, 10); // Rastro suave
+
+  // Crear una partícula donde esté el mouse
+  if (mouseIsPressed) {
+    walkers.push(new Walker(mouseX, mouseY));
+  }
+
+  // Actualizar y dibujar cada partícula
+  for (let w of walkers) {
+    w.step();
+    w.show();
+  }
+}
+
+class Walker {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    // 1. DISTRIBUCIÓN NORMAL: Tamaños variados (media 5, desviación 2)
+    this.size = randomGaussian(5, 2);
+  }
+
+  step() {
+    // 2. LÉVY FLIGHT: Elegir el tamaño del paso
+    let stepSize = random(1) < 0.05 ? random(20, 50) : random(2, 5);
+
+    // 3. CAMINATA CON TENDENCIA: Ir hacia el mouse
+    let xDir = random(-1, 1) + (mouseX > this.x ? 0.2 : -0.2);
+    let yDir = random(-1, 1) + (mouseY > this.y ? 0.2 : -0.2);
+
+    this.x += xDir * stepSize;
+    this.y += yDir * stepSize;
+  }
+
+  show() {
+    fill(0, 200, 255, 150);
+    noStroke();
+    circle(this.x, this.y, this.size);
+  }
+}
+```
+
+**Coloca en enlace a tu sketch en p5.js en tu bitácora.**
+
+[EJ 7 en p5.js](https://editor.p5js.org/Tomasm12/sketches/HlD5eYCx3)
+
+**Selecciona una captura de pantalla de tu sketch y colócala en tu bitácora.**
 
 
 
+<img width="1163" height="1168" alt="image" src="https://github.com/user-attachments/assets/333c58a6-86d4-4fdd-aef3-be8b646f1795" />
 
 
 
