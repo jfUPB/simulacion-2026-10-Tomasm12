@@ -89,9 +89,7 @@ Una distribución uniforme es cuando los números aleatorios tienen la misma pro
 
 **Modifica el código de la caminata aleatoria para que utilice una distribución no uniforme, favoreciendo el movimiento hacia la derecha.**
 
-// The Nature of Code - Daniel Shiffman
 
-// Modificado para tener una tendencia (bias) hacia la derecha
 ```javascript
 let walker;
 
@@ -379,6 +377,7 @@ class Walker {
 
 
 <img width="1163" height="1168" alt="image" src="https://github.com/user-attachments/assets/333c58a6-86d4-4fdd-aef3-be8b646f1795" />
+
 
 
 
