@@ -1,7 +1,9 @@
-# Unidad 2
+<img width="900" height="689" alt="image" src="https://github.com/user-attachments/assets/2b84c9af-04b8-4f14-a067-d10dfc38430e" /># Unidad 2
 
 ## Bitácora de proceso de aprendizaje
+
 **Actividad 01**
+
 La actividad que escogí fue Pikaworm. Me llamó la atención por lo extraña que se veía y por la sensación de que los Pikaworms se iban acercando a uno, como si fueran a salirse de la pantalla.
 
 **Actividad 02**
@@ -220,7 +222,7 @@ El objeto se mueve siguiendo el mouse. El movimiento parece intencional, como si
 
 Describe el concepto de tu obra generativa. Explica el concepto de tu obra generativa, qué regla aplicaste para la aceleración y por qué, si fue una decisión de diseño, o qué te evoca, si fue una exploración artística.
 
-quiero generar particulas de colores que persiguen al mause y usando los conceptos de motion 101, quiero que estas paraezcan de dorma aletoria y cunaod llegue al mouse giren y orbiten alrededor de este como si fueran atomos.
+quiero generar particulas de colores que persiguen al mause y usando los conceptos de motion 101, quiero que estas paraezcan de forma aletoria y cunaod llegue al mouse giren y orbiten alrededor de este como si fueran atomos.
 
 El código de la aplicación.
 
@@ -308,3 +310,143 @@ Selecciona capturas de pantalla representativas de tu pieza de arte generativa.
 ## Bitácora de reflexión
 
 
+**Describe el concepto de tu obra generativa. Explica el concepto de tu obra generativa.**
+
+El programa muestra muchas partículas que se mueven por la pantalla y chocan entre ellas. Cuando dos partículas del mismo color se encuentran, empujan a las partículas cercanas, creando explosiones visuales que parecen fuegos artificiales.
+
+**El código de la aplicación.**
+
+```javascript
+let particles = [];
+const numParticles = 500; // ¡Aumentado!
+const explosionRadius = 80; 
+const attractionStrength = 1.5; // Ajustado para más partículas
+const collisionDistance = 6; 
+const explosionForce = 8; 
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(5); // Casi negro
+  
+  // Grupos de colores neón para que resalten
+  let colors = [
+    color(0, 255, 200, 150),   // Turquesa
+    color(255, 0, 150, 150),   // Magenta
+    color(200, 255, 0, 150),   // Lima
+    color(255, 255, 255, 200)  // Blanco (el detonador)
+  ];
+
+  for (let i = 0; i < numParticles; i++) {
+    particles.push(new Particle(random(colors)));
+  }
+}
+
+function draw() {
+  // Fondo con estela persistente
+  fill(5, 20); 
+  rect(0, 0, width, height);
+
+  for (let i = 0; i < particles.length; i++) {
+    let p = particles[i];
+
+    
+    for (let j = i + 1; j < particles.length; j++) {
+      let other = particles[j];
+      
+      // Vector de distancia
+      let dx = other.pos.x - p.pos.x;
+      let dy = other.pos.y - p.pos.y;
+      let d2 = dx * dx + dy * dy; // Distancia al cuadrado (más rápido que dist())
+
+      // 1. ATRACCIÓN (Si están cerca pero no chocando)
+      if (d2 < 10000 && d2 > 100) {
+        let force = p5.Vector.sub(other.pos, p.pos);
+        force.setMag(attractionStrength / d2);
+        p.applyForce(force);
+      }
+
+      // 2. EXPLOSIÓN (Si chocan y son del mismo color)
+      if (d2 < collisionDistance * collisionDistance) {
+        if (p.color === other.color) {
+          triggerExplosion(p.pos);
+        }
+      }
+    }
+
+    p.update();
+    p.display();
+  }
+}
+
+function triggerExplosion(pos) {
+  // Efecto visual de flash
+  noStroke();
+  fill(255, 100);
+  ellipse(pos.x, pos.y, 20);
+
+  // Empujamos a todas las partículas cercanas
+  for (let p of particles) {
+    let d2 = distSq(p.pos, pos);
+    if (d2 < explosionRadius * explosionRadius) {
+      let blast = p5.Vector.sub(p.pos, pos);
+      let strength = explosionForce / (sqrt(d2) + 1);
+      blast.setMag(strength);
+      p.applyForce(blast);
+    }
+  }
+}
+
+// Función auxiliar para rapidez matemática
+function distSq(v1, v2) {
+  return (v1.x - v2.x) ** 2 + (v1.y - v2.y) ** 2;
+}
+
+class Particle {
+  constructor(col) {
+    this.pos = createVector(random(width), random(height));
+    this.vel = p5.Vector.random2D();
+    this.acc = createVector(0, 0);
+    this.maxSpeed = 4;
+    this.color = col;
+  }
+
+  applyForce(f) {
+    this.acc.add(f);
+  }
+
+  update() {
+    this.vel.add(this.acc);
+    this.vel.limit(this.maxSpeed);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+    this.vel.mult(0.98); // Fricción
+
+    // Rebote suave en bordes
+    if (this.pos.x < 0 || this.pos.x > width) this.vel.x *= -1;
+    if (this.pos.y < 0 || this.pos.y > height) this.vel.y *= -1;
+    this.pos.x = constrain(this.pos.x, 0, width);
+    this.pos.y = constrain(this.pos.y, 0, height);
+  }
+
+  display() {
+    stroke(this.color);
+    // Con muchas partículas, un grosor de 1 es más elegante
+    strokeWeight(1.2);
+    // Dibujamos una línea corta que representa el vector velocidad (estética Tarbell)
+    line(this.pos.x, this.pos.y, this.pos.x - this.vel.x, this.pos.y - this.vel.y);
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+```
+
+
+**Un enlace al proyecto en el editor de p5.js.**
+
+[Un enlace al proyecto](https://editor.p5js.org/Tomasm12/sketches/UhgWBA9fw)
+
+**Selecciona capturas de pantalla representativas de tu pieza de arte generativa.**
+
+<img width="900" height="689" alt="image" src="https://github.com/user-attachments/assets/e4db8ce3-ce3c-472a-b665-24e7ba333186" />
