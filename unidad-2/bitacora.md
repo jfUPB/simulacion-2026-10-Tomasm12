@@ -294,6 +294,7 @@ function mousePressed() {
 }
 ```
 Un enlace al proyecto en el editor de p5.js.
+
 [Actividad 9  Codigo](https://editor.p5js.org/Tomasm12/sketches/V4bS40WkZ)
 
 Selecciona capturas de pantalla representativas de tu pieza de arte generativa.
@@ -305,4 +306,5 @@ Selecciona capturas de pantalla representativas de tu pieza de arte generativa.
 
 
 ## Bitácora de reflexión
+
 
