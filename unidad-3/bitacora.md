@@ -278,6 +278,140 @@ class Mover {
 
 ## Bitácora de aplicación 
 
+*Actividad 04*
+
+Quiero crear una obra generativa inspirada en las estrellas y en la idea del Big Bang como un ciclo. La pieza comenzará con una estrella en el centro que explotará y lanzará muchas partículas en todas las direcciones. Primero usaré fricción para que las estrellas se vayan desacelerando después de la explosión. Luego aplicaré resistencia al aire o a un fluido para que algunas caigan lentamente como una lluvia de estrellas. Finalmente, usaré una fuerza gravitacional para que todas vuelvan al centro, se agrupen y el sistema reinicie la explosión, creando un ciclo continuo de expansión y reunión.
+
+```javascript
+let estrellas = [];
+let fase = "EXPLOSION"; 
+let contador = 0; 
+let centro;
+
+function setup() {
+  createCanvas(800, 600);
+  centro = createVector(width / 2, height / 2);
+  reiniciar();
+}
+
+function draw() {
+  background(0, 30); 
+
+  blendMode(ADD); 
+
+  // --- DIBUJO DEL NÚCLEO CENTRAL ESTÉTICO ---
+  noStroke();
+  let colorNucleo;
+  if (fase === "EXPLOSION") colorNucleo = color(255, 50, 50);      // Rojo
+  else if (fase === "LLUVIA") colorNucleo = color(50, 150, 255);   // Azul
+  else colorNucleo = color(255, 200, 0);                           // Amarillo
+
+  // Efecto de aura/brillo para la esfera central
+  for (let i = 3; i > 0; i--) {
+    fill(red(colorNucleo), green(colorNucleo), blue(colorNucleo), 40);
+    circle(centro.x, centro.y, 30 + i * 15); // Capas de luz
+  }
+  fill(colorNucleo);
+  circle(centro.x, centro.y, 30); // Centro sólido
+
+  for (let e of estrellas) {
+    
+    if (fase === "EXPLOSION") {
+      // Fuerza que frena el movimiento inicial 
+      let friccion = e.velocity.copy();
+      friccion.mult(-0.05); 
+      e.applyForce(friccion);
+
+      if (contador > 100) fase = "LLUVIA";
+
+    } else if (fase === "LLUVIA") {
+      // >>> 2. RESISTENCIA AL AIRE Y FLUIDOS <<<
+      // Gravedad suave hacia abajo + fuerza de arrastre (resistencia)
+      let gravedadCaida = createVector(0, 0.1); 
+      e.applyForce(gravedadCaida);
+      
+      let resistencia = e.velocity.copy();
+      resistencia.mult(-0.02); // La resistencia frena la caída libre
+      e.applyForce(resistencia);
+
+      if (contador > 250) fase = "COLAPSO";
+
+    } else if (fase === "COLAPSO") {
+      // >>> 3. ATRACCIÓN GRAVITACIONAL <<<
+      // El núcleo central atrae toda la materia hacia su origen
+      let fuerza = p5.Vector.sub(centro, e.position);
+      fuerza.normalize();
+      fuerza.mult(0.6); 
+      e.applyForce(fuerza);
+
+      // Freno adicional para que las estrellas se detengan en el centro
+      e.velocity.mult(0.94);
+
+      if (contador > 750) reiniciar();
+    }
+
+    e.update();
+    e.show();
+  }
+
+  blendMode(BLEND); // Volver al modo normal
+  contador++; 
+}
+
+function reiniciar() {
+  fase = "EXPLOSION";
+  contador = 0;
+  estrellas = [];
+  for (let i = 0; i < 90; i++) {
+    estrellas[i] = new Mover(centro.x, centro.y, random(1, 4));
+    let vel = p5.Vector.random2D();
+    vel.mult(random(6, 16));
+    estrellas[i].velocity = vel;
+  }
+}
+
+// --- CLASE MOVER ---
+class Mover {
+  constructor(x, y, m) {
+    this.mass = m;
+    this.position = createVector(x, y);
+    this.velocity = createVector(0, 0);
+    this.acceleration = createVector(0, 0);
+  }
+
+  applyForce(f) {
+    let fuerza = p5.Vector.div(f, this.mass);
+    this.acceleration.add(fuerza);
+  }
+
+  update() {
+    this.velocity.add(this.acceleration);
+    this.position.add(this.velocity);
+    this.acceleration.mult(0);
+  }
+
+  show() {
+    noStroke();
+    // Color de las estrellas basado en la fase actual
+    if (fase === "EXPLOSION") fill(255, 100, 100, 150);
+    else if (fase === "LLUVIA") fill(100, 200, 255, 150);
+    else fill(255, 255, 150, 150);
+    
+    // Doble círculo para crear un efecto de estrella con brillo
+    circle(this.position.x, this.position.y, this.mass * 6); // Brillo
+    fill(255); 
+    circle(this.position.x, this.position.y, this.mass * 2); // Núcleo
+  }
+}
+
+```
+[Link Actividad 4)](https://editor.p5js.org/Tomasm12/sketches/D8o5MqPt2)
+
+<img width="790" height="588" alt="image" src="https://github.com/user-attachments/assets/a242d798-1839-4e2a-ad28-26dc57ab67ee" />
+<img width="799" height="589" alt="image" src="https://github.com/user-attachments/assets/bf51264c-9490-4458-b14c-e6dc1766189f" />
+<img width="783" height="589" alt="image" src="https://github.com/user-attachments/assets/8605eef7-81b5-4de9-9bb8-1111b36b0e85" />
+
 
 
 ## Bitácora de reflexión
+
