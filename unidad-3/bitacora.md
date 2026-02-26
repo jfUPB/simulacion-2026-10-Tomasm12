@@ -415,3 +415,8 @@ class Mover {
 
 ## Bitácora de reflexión
 
+Explica detalladamente en tu bitácora ¿Qué es el marco de movimiento motion 101 y cómo se relacionan: fuerza, aceleración, velocidad y posición?
+
+es una manera básica de entender cómo funciona el movimiento en animación. Se basa en cuatro conceptos: fuerza, aceleración, velocidad y posición.
+
+La fuerza es lo que hace que algo empiece a moverse o cambie su movimiento. Esa fuerza genera aceleración, que es cuando la velocidad cambia (aumenta, disminuye o cambia de dirección). La velocidad es qué tan rápido se mueve algo, y la posición es el lugar donde se encuentra en el espacio. En pocas palabras, todo está conectado: la fuerza provoca aceleración, la aceleración cambia la velocidad y la velocidad determina la posición.
