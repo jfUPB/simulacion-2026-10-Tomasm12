@@ -586,20 +586,19 @@ Péndulo 2: Su punto de apoyo (pivote) ya no es fijo; ahora es la "bola" del pri
 El truco del código:
 Al igual que con los resortes, la clave es actualizar la posición del segundo en cada frame del draw(). Le decimos al segundo péndulo: "Tu techo es la posición actual de la bola del primero".
 
-JavaScript
+```JavaScript
 
 // La conexión que crea el sistema en serie:
 p2.pivot.set(p1.bob.x, p1.bob.y);
+```
 
-
-
-**Actividad 11** 
 
 
 ## Bitácora de aplicación 
 
-
+**Actividad 11** 
 
 ## Bitácora de reflexión
+
 
 
