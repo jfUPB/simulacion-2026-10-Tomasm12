@@ -598,7 +598,150 @@ p2.pivot.set(p1.bob.x, p1.bob.y);
 
 **Actividad 11** 
 
+**Describe el concepto de tu obra generativa.**
+Unas holas de colores las cuales se pueden mover o sacudir con el mouse, ademas se podra usar un boton para que esta holas choquen/exploten y repues se re organizaran para continar como una ola
+
+Mi obra generativa está formada por olas de puntos de colores que se mueven de manera continua. Las olas tienen un movimiento suave que cambia con el tiempo.
+
+El mouse permite mover y sacudir las olas como si las pudieras tocar, alterando su forma. Al presionar un botón, los puntos se dispersan como una explosión, pero después el sistema hace que vuelvan a ordenarse y continúen funcionando como una ola.
+  
+```JavaScript
+
+let waveLayers = [];
+let numLayers = 25; 
+let pointsPerLine = 60; 
+let startAngle = 0;
+
+class QuantumPoint {
+  constructor(x, y, layer) {
+    this.anchorPos = createVector(x, y);
+    this.pos = createVector(x, y);
+    this.vel = createVector();
+    this.acc = createVector();
+    this.layer = layer;
+    this.noiseOff = random(1000); 
+  }
+
+  applyForce(f) {
+    this.acc.add(f);
+  }
+
+  update() {
+    // UNIDAD 3: Resorte mucho más suave para un retorno lento y elegante
+    let restoring = p5.Vector.sub(this.anchorPos, this.pos);
+    restoring.mult(0.03); // Antes era 0.08. Ahora es más "flojo"
+    this.applyForce(restoring);
+
+    // UNIDAD 2: Cinemática
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+    this.acc.mult(0); 
+    this.vel.mult(0.92); // Fricción más alta para que se deslicen como en agua
+  }
+
+  interact() {
+    let d = dist(mouseX, mouseY, this.pos.x, this.pos.y);
+    
+    if (d < 100) { 
+      let repel = p5.Vector.sub(this.pos, createVector(mouseX, mouseY));
+      repel.setMag(map(d, 0, 100, 1.0, 0)); // Repulsión más suave
+      this.applyForce(repel);
+
+      let mouseVel = createVector(mouseX - pmouseX, mouseY - pmouseY);
+      mouseVel.mult(0.03); // Arrastre más delicado
+      this.applyForce(mouseVel);
+    }
+  }
+
+  showPoint() {
+    // UNIDAD 1: Variación aleatoria de tamaño mucho más notoria (respiración)
+    // Aceleramos un poco el tiempo del ruido para que el cambio de tamaño sea evidente
+    let rNoise = noise(this.noiseOff, frameCount * 0.04); 
+    // Mapeamos a un rango más extremo: desde puntos minúsculos hasta esferas grandes
+    let baseRadius = map(rNoise, 0, 1, 1, 12); 
+    
+    let kineticRadius = baseRadius + this.vel.mag() * 0.2; 
+    
+    let hue = (this.pos.x * 0.1 + frameCount * 0.5 + this.layer * 5) % 360;
+    
+    fill(hue, 80, 100, 0.5); 
+    noStroke();
+    
+    circle(this.pos.x, this.pos.y, kineticRadius);
+  }
+}
+
+function setup() {
+  createCanvas(800, 500); 
+  colorMode(HSB, 360, 100, 100, 1); 
+  
+  for (let l = 0; l < numLayers; l++) {
+    let currentLine = [];
+    for (let i = 0; i < pointsPerLine; i++) {
+      let x = map(i, 0, pointsPerLine - 1, 50, width - 50);
+      let y = map(l, 0, numLayers - 1, 80, height - 80);
+      currentLine.push(new QuantumPoint(x, y, l));
+    }
+    waveLayers.push(currentLine);
+  }
+}
+
+function draw() {
+  background(10, 0.4); 
+  blendMode(ADD);
+
+  for (let l = 0; l < waveLayers.length; l++) {
+    let points = waveLayers[l];
+    
+    for (let i = 0; i < points.length; i++) {
+      let p = points[i];
+      
+      let baseAngle = startAngle + (i * 0.1) + (l * 0.05);
+      p.anchorPos.y = map(l, 0, numLayers - 1, 80, height - 80) + sin(baseAngle) * 30;
+      
+      let noiseVal = noise(p.noiseOff, frameCount * 0.005);
+      p.anchorPos.y += map(noiseVal, 0, 1, -15, 15);
+      
+      p.interact(); 
+      p.update();   
+      p.showPoint();
+      
+      p.noiseOff += 0.02; // Aceleramos un poco el offset para que cambien de tamaño fluidamente
+    }
+  }
+
+  blendMode(BLEND); 
+  startAngle += 0.015; 
+}
+
+function keyPressed() {
+  if (key === 'E' || key === 'e') {
+    for (let currentLine of waveLayers) {
+      for (let p of currentLine) {
+        // UNIDAD 1: Explosión suave y etérea
+        let explosion = p5.Vector.random2D();
+        
+        if (random(1) < 0.9) {
+          explosion.mult(random(3, 10)); // Impulso muy leve
+        } else {
+          explosion.mult(random(15, 30)); // El salto Lévy también es más suave
+        }
+        
+        p.applyForce(explosion);
+      }
+    }
+  }
+}
+```
+[Ej 11 unidad 4](https://editor.p5js.org/Tomasm12/sketches/-ZxXFZg5D)
+
+<img width="712" height="444" alt="image" src="https://github.com/user-attachments/assets/fb74306a-7833-4e93-879b-ae8f2499439e" />
+
+<img width="720" height="441" alt="image" src="https://github.com/user-attachments/assets/6fe7eb2e-0c42-4c31-a52e-54b7d87da35e" />
+
+
 ## Bitácora de reflexión
+
 
 
 
