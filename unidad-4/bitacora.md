@@ -600,9 +600,6 @@ p2.pivot.set(p1.bob.x, p1.bob.y);
 
 **Describe el concepto de tu obra generativa.**
 
-
-Unas holas de colores las cuales se pueden mover o sacudir con el mouse, ademas se podra usar un boton para que esta holas choquen/exploten y repues se re organizaran para continar como una ola
-
 Mi obra generativa está formada por olas de puntos de colores que se mueven de manera continua. Las olas tienen un movimiento suave que cambia con el tiempo.
 
 El mouse permite mover y sacudir las olas como si las pudieras tocar, alterando su forma. Al presionar un botón, los puntos se dispersan como una explosión, pero después el sistema hace que vuelvan a ordenarse y continúen funcionando como una ola.
@@ -743,6 +740,7 @@ function keyPressed() {
 
 
 ## Bitácora de reflexión
+
 
 
 
