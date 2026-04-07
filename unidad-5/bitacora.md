@@ -96,9 +96,69 @@ Tendrías que crear una nueva clase usando la palabra clave extends (por ejemplo
 La lógica de iteración (el bucle for inverso) y la lógica de muerte (evaluar isDead() y aplicar el splice()) permanecen idénticas. Lo que se modificó fue la capa de estructura (al diversificar los objetos con herencia) y la capa de visualización (al tener representaciones gráficas simultáneas). La capa de comportamiento (la integración de los vectores usando Motion 101) permaneció totalmente intacta.
 
 
+**Actividad 04**
 
-**Capa de visualización:**
+** En Example 4.6, ¿Dónde se define la gravedad? ¿Quién la aplica a las partículas? ¿Es una fuerza global o local?**
 
+Respuesta: La gravedad se define en la función draw() (fuera de las clases). El Emitter es el encargado de repartirla, ya que tiene una función applyForce que le "pasa" ese empujón a cada una de sus partículas. Es una fuerza global porque es el mismo vector para todas: a todas las empuja igual hacia abajo, sin importar en qué parte de la pantalla estén.
+
+**En Example 4.7, ¿Qué diferencia hay entre la gravedad y la fuerza del repeller? ¿Dónde “vive” cada una?**
+
+Respuesta: La gravedad es una fuerza "tonta" y constante (siempre apunta igual), mientras que el repeller es "inteligente" porque su fuerza cambia según la distancia. La gravedad "vive" como una variable suelta en el código principal, pero la fuerza del repeller "vive" dentro de su propia clase (Repeller), que es la que sabe calcular qué tanto debe empujar a cada partícula según lo cerca que esté.
+
+**La fuerza del repeller depende de la distancia entre la partícula y el repeller. ¿Qué principio físico se está modelando?**
+
+Respuesta: Se está usando la idea de la gravedad de Newton o la fuerza de los imanes. Es el principio de que la fuerza se vuelve mucho más débil a medida que te alejas (lo que llaman la ley del cuadrado inverso). Básicamente, si estás muy cerca el empujón es fuertísimo, pero si te alejas un poco, la fuerza cae rapidísimo.
+
+**¿Cambió la clase Particle entre Example 4.6 y 4.7? ¿Qué implica esto sobre la separación entre comportamiento de la partícula y fuerzas externas?**
+
+Respuesta: No, la clase Particle casi no cambió. Esto es genial porque significa que la partícula es "ciega": ella no sabe quién la empuja (si es el viento, un imán o la gravedad), solo sabe recibir una fuerza y moverse. Esto permite que el comportamiento (moverse) esté separado de las fuerzas (quién la empuja), haciendo que el código sea mucho más fácil de organizar.
+
+<img width="664" height="401" alt="image" src="https://github.com/user-attachments/assets/58e67ef9-62db-40db-8fa2-6dfa92596d05" />
+
+modificacion de codigo 
+
+```js
+
+  show() {
+    stroke(0, this.lifespan);
+    strokeWeight(2);
+    fill(127, this.lifespan);
+    
+    // Guardamos el estado del lienzo
+    push(); 
+    // Movemos el "centro" del dibujo a la posición de la partícula
+    translate(this.position.x, this.position.y); 
+    // Hacemos que rote un poco (usando su lifespan para que el giro cambie)
+    rotate(this.lifespan * 0.1); 
+    
+    rectMode(CENTER);
+    square(0, 0, 8); // Dibujamos el cuadrado en el nuevo centro (0,0)
+    pop(); 
+  }
+```
+
+1. ¿Qué líneas de código tocaste?
+
+Toqué exclusivamente las líneas dentro de la función show() de la clase Particle (aproximadamente de la línea 66 a la 72 del código original).
+
+2. ¿Qué clases/funciones modificaste?
+
+Solo modifiqué la clase Particle y su función show(). No se tocó nada más.
+
+3. ¿Qué partes del programa NO necesitaste modificar?
+
+La clase Emitter: Sigue creando y borrando partículas igual que antes.
+
+La clase Repeller: Sigue calculando la fuerza de repulsión sin importarle cómo se ven las partículas.
+
+La función update(): La física (gravedad, velocidad, posición) sigue funcionando igual.
+
+El draw() y setup(): El flujo principal del programa no cambió.
+
+4. ¿Por qué fue posible hacer este cambio sin afectar las demás capas?
+
+Fue posible gracias a la modularidad. El programa está dividido en "especialistas": a la física solo le importan los números (vectores), y al dibujo solo le importa dónde están esos números para poner un color o una forma. Como el Emitter y el Repeller solo hablan con la "capa de física", puedes cambiar la "capa visual" por completo y el sistema ni se entera; simplemente sigue moviendo "puntos" en el espacio.
 
 
 
@@ -108,5 +168,29 @@ La lógica de iteración (el bucle for inverso) y la lógica de muerte (evaluar 
 
 ## Bitácora de aplicación 
 
+El ciclo que quiero crear representa el origen del universo. Inicia con una esfera blanca que vibra o se mueve y comienza a expandirse hasta explotar. A partir de esta explosión se generan partículas de distintos colores y tamaños que se dispersan por toda la pantalla, simulando estrellas, planetas y la formación del universo. Finalmente, se genera un agujero negro que consume todo lo existente, poniendo fin a este ciclo.
+
+<img width="415" height="723" alt="image" src="https://github.com/user-attachments/assets/41fff355-e69d-4421-8b3e-4c3165922933" />
+
+
+La emisión representa la creación constante del universo: primero ocurre una gran explosión inicial y luego siguen naciendo partículas, mostrando que el universo está en expansión y nunca es completamente estático.
+
+Las fuerzas simbolizan las leyes que ordenan el caos. Al inicio, las partículas se mueven libremente, pero la interacción del usuario introduce perturbaciones. Al final, la gravedad del agujero negro se vuelve dominante e inevitable.
+
+La condición de muerte . Las partículas desaparecen con el tiempo o son absorbidas por el agujero negro, no como destrucción total, sino como transformación de la materia.
+
+La visualización usa el contraste entre colores vivos y el vacío oscuro para mostrar la vida, diversidad y energía del universo frente a su colapso final.
+
+La interacción del usuario es el motor del ciclo: activa el nacimiento del universo, influye en su comportamiento y finalmente decide cuándo y dónde ocurre su destrucción. es el creador y el destructor de todo.
 
 ## Bitácora de reflexión
+
+
+[Link Apply](https://editor.p5js.org/Tomasm12/sketches/vV1TPqRDf)
+
+<img width="689" height="505" alt="image" src="https://github.com/user-attachments/assets/f48c73c9-9a0f-40c5-a3a7-8ea8ae4776d4" />
+<img width="673" height="517" alt="image" src="https://github.com/user-attachments/assets/7808d28e-3183-4ea2-90cc-1355a7e8aba7" />
+
+<img width="706" height="515" alt="image" src="https://github.com/user-attachments/assets/9d59e6e0-1193-4d4e-9b17-1ad94cac5fa1" />
+
+<img width="697" height="515" alt="image" src="https://github.com/user-attachments/assets/4b8e3acc-89f7-4b6c-b99c-5a85a18d8b68" />
