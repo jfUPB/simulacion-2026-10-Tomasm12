@@ -183,7 +183,6 @@ La visualización usa el contraste entre colores vivos y el vacío oscuro para m
 
 La interacción del usuario es el motor del ciclo: activa el nacimiento del universo, influye en su comportamiento y finalmente decide cuándo y dónde ocurre su destrucción. es el creador y el destructor de todo.
 
-## Bitácora de reflexión
 
 
 [Link Apply](https://editor.p5js.org/Tomasm12/sketches/vV1TPqRDf)
@@ -194,3 +193,5 @@ La interacción del usuario es el motor del ciclo: activa el nacimiento del univ
 <img width="706" height="515" alt="image" src="https://github.com/user-attachments/assets/9d59e6e0-1193-4d4e-9b17-1ad94cac5fa1" />
 
 <img width="697" height="515" alt="image" src="https://github.com/user-attachments/assets/4b8e3acc-89f7-4b6c-b99c-5a85a18d8b68" />
+
+## Bitácora de reflexión
