@@ -149,6 +149,91 @@ En música Ambient o Minimalista (estilo Brian Eno o Philip Glass), donde peque�
 
 También en Jazz experimental, por la forma en que los agentes parecen improvisar trayectorias dentro de una estructura establecida.
 
+**Actividad 04: Flocking**
+
+Separación: 
+Evitar chocar. El agente calcula qué tan cerca están sus vecinos inmediatos y genera una fuerza de dirección (steering) para alejarse de ellos. Garantiza que no se agrupen en un solo punto.
+
+Alineación: 
+
+Copiar la dirección. El agente observa la velocidad y dirección promedio de los vecinos que lo rodean y ajusta su propia trayectoria para moverse en paralelo a ellos.
+
+Cohesión: 
+
+Mantenerse unidos. El agente calcula el "centro de masa" (la posición promedio) de sus vecinos cercanos y genera una fuerza que lo empuja hacia ese centro, evitando quedarse rezagado o aislado.
+
+
+Parámetros que controlan las reglas
+
+En el código de Shiffman, estas reglas están controladas matemáticamente por dos tipos de parámetros principales:
+
+Los Pesos (Multipliers): Las líneas sep.mult(1.5), ali.mult(1.0) y coh.mult(1.0). Definen qué tanta importancia le da el agente a cada regla.
+
+El Radio de Percepción: Variables como desiredSeparation = 25 o neighborDistance = 50. Determinan qué tan "lejos" puede ver el agente para considerar a otro como su vecino.
+
+Modificación del sistema y Comportamiento Emergente
+
+Si alteramos los pesos, el sistema colectivo muta por completo:
+
+Modificación 1 (Mucha Separación, poca Cohesión/Alineación): Si ponemos la Separación en 3.0 y las otras en 0.1, el comportamiento es disperso y nervioso. Se asemeja al caos de un enjambre de moscas, donde el pánico por no chocar domina la escena.
+
+Modificación 2 (Mucha Cohesión y Alineación, poca Separación): Si ponemos Cohesión en 2.0, Alineación en 2.0 y Separación en 0.5, el grupo se vuelve extremadamente compacto, estable y fluido. Parecen una gota de mercurio moviéndose unida o un banco de peces asustado que se comprime para defenderse.
+
+Atmósfera visual y relación musical
+
+Atmósfera visual: El flocking produce una sensación profundamente hipnótica e inquietante a la vez, porque es vida artificial pura. Nuestro cerebro reconoce un movimiento biológico, intencional y orgánico (emergencia) naciendo de formas geométricas frías.
+
+Relación musical: Este algoritmo brillaría en una pieza de IDM (Intelligent Dance Music), Techno Textural o música ambiental reactiva. Podrías mapear frecuencias específicas a los parámetros: por ejemplo, que un golpe de bajo (kick) fuerte aumente temporalmente la Separación (creando una explosión dispersa) y que los pads atmosféricos o sintetizadores sostenidos suban la Cohesión y Alineación, volviendo a unir la bandada en un flujo armónico.
+
+**Actividad 05: Comparar algoritmos como herramientas de diseño**
+
+Comparativa: Flow Fields vs. Flocking
+
+**Movimiento:**
+
+Flow Fields: Movimiento de "río". Las partículas se dejan llevar por una corriente invisible.
+
+Flocking: Movimiento de "bandada". Los agentes se mueven por su relación con los demás.
+
+**Control Visual:**
+
+Flow Fields: Alto. Tú decides el mapa y las partículas lo obedecen.
+
+Flocking: Bajo. Tú pones las reglas y el grupo hace lo que quiere.
+
+**Nivel de Emergencia (Sorpresa):**
+
+Flow Fields: Bajo. No hay sorpresas, las partículas no interactúan entre sí.
+
+Flocking: Muy alto. Aparecen comportamientos grupales que tú no programaste directamente.
+
+**Sensación:**
+
+Flow Fields: Armonía, naturaleza inanimada (viento, agua), calma.
+
+Flocking: Vida, instinto, nerviosismo, grupo social.
+
+**Ventajas:**
+
+Flow Fields: Es muy rápido de procesar y siempre se ve ordenado y estético.
+
+Flocking: Se siente vivo y orgánico; es mucho más dinámico.
+
+**Limitaciones:**
+
+Flow Fields: Puede verse repetitivo o "muerto" si no cambias el campo.
+
+Flocking: Consume mucha memoria si hay muchos agentes y es difícil de controlar.
+
+**¿Cuál algoritmo usar según el tipo de canción?**
+
+Contemplativa: Flow Fields. Porque es suave, predecible y transmite paz, como ver el movimiento del agua.
+
+Agresiva: Flocking. Porque al subir la Separación, los agentes parecen chocar y rebotar con violencia, creando un caos visual que encaja con ritmos fuertes.
+
+Melancólica: Flow Fields. Porque puedes hacer que las partículas caigan lentamente como lluvia o se desvanezcan con suavidad, sugiriendo tristeza.
+
+Eufórica: Flocking. Porque cuando todos los agentes se Alinean y se unen con mucha velocidad, crean una explosión de movimiento coordinado que transmite mucha energía.
 
 ## Bitácora de aplicación 
 
