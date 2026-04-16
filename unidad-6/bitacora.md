@@ -238,4 +238,457 @@ Eufórica: Flocking. Porque cuando todos los agentes se Alinean y se unen con mu
 ## Bitácora de aplicación 
 
 
+**Actividad 06: Diseño de un instrumento visual para un tema musical**
+
+**Concepto visual**
+
+quiero hacer un cielo conestrella y la luna en medio es una ecena en la nmoche asi que colocaria pequeñas particulas o luciernagas/Will-o'-Wisp, quiero dar una sencacion de traquilidad y paz 
+
+** Relacion con team musical**
+
+la conexion es que la musica es la que determina la intensidad del momento, osea que esta hara que se sacudan mas las particulas, que la luna de un brillo mas fuerte y que salgan mas particulas
+
+**Bocetos.**
+
+<img width="1862" height="1027" alt="image" src="https://github.com/user-attachments/assets/412c3596-e846-457f-bba1-4d875c99e693" />
+<img width="1909" height="1045" alt="image" src="https://github.com/user-attachments/assets/3395dfbd-307c-4242-ab30-723f3fa0ef0d" />
+<img width="1909" height="1048" alt="image" src="https://github.com/user-attachments/assets/812c3c8e-6808-4b34-96a3-5640011558b3" />
+
+**Moodboard o referencias.**
+
+<img width="512" height="512" alt="image" src="https://github.com/user-attachments/assets/fe2fc656-4551-46d3-907e-1fca7042f864" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5334cdc9-ade4-415b-a43b-89a1c4e1fbb2" />
+<img width="725" height="371" alt="image" src="https://github.com/user-attachments/assets/3efa673b-e00c-44a1-b16f-9edae58dab28" />
+
+<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/e48665c5-e452-4ae2-9429-587256bd1d3e" />
+<img width="1184" height="630" alt="image" src="https://github.com/user-attachments/assets/91d96662-590c-47a6-a0b7-dc5d8dd2fcef" />
+<img width="729" height="331" alt="image" src="https://github.com/user-attachments/assets/5b6f7f93-0893-4743-9a53-2503769cf6c8" />
+
+
+**Mapa de decisiones**
+
+Fondo con rastro (Alpha): Decidí no limpiar el fondo por completo para dejar una estela suave. Esto aporta una sensación de fluidez y paso del tiempo, reforzando la paz del concepto.
+
+Object Pooling (Piscina de objetos): Implementé este sistema para manejar miles de partículas sin caídas de FPS. La decisión técnica permite que el "enjambre" sea denso y envolvente sin romper la inmersión.
+
+Uso de lerpColor: Los cambios de color no son instantáneos, sino graduales. Esto evita saltos visuales bruscos que romperían la atmósfera de tranquilidad.
+
+Glow de la Luna: El uso de shadowBlur en la luna central actúa como el "corazón" del sistema, dando un punto focal claro al espectador.
+
+**Mapa de interpretación **
+
+Mouse (Perturbación): El movimiento del ratón ahuyenta a las partículas y a las luciérnagas. El usuario actúa como un viento que despeja el cielo.
+
+Barra Espaciadora (Clímax): Activa una fuerza centrífuga (explosionForce). Se debe usar en los momentos de mayor explosión sonora de la canción para dispersar todo el sistema hacia los bordes.
+
+Flechas (Mood de la Luna): Cambian el ciclo cromático de la luna para pasar de una noche gélida (azul) a una noche mística (rojo pálido).
+
+Teclas A / D (Energía de Partículas): Permiten al intérprete cambiar la "temperatura" visual de la aurora, sincronizándola con el sentimiento de la letra o la melodía.
+
+**Justificación del algoritmo elegido**
+
+Flow Fields (Campos de flujo): Elegí este algoritmo porque permite un movimiento orgánico y "curvo". A diferencia de un movimiento lineal, el flow field simula las corrientes de aire invisibles de la noche.
+
+Flocking / Boids (Enjambre): Lo apliqué a los Will-o'-Wisp (luciernagas) para que tengan un comportamiento social. No se mueven solas, sino que se acompañan, lo que genera una sensación de ecosistema vivo y no de simples puntos rebotando.
+
+Construcción de la Luna y Glow: La luna se diseñó como el núcleo del instrumento. Para lograr el efecto de irradiación mística sin sacrificar el rendimiento, utilicé drawingContext.shadowBlur y shadowColor. Esta técnica permite que la luna no sea un círculo plano, sino una fuente de luz que "sangra" hacia el fondo, creando una atmósfera de profundidad espacial.
+
+Sincronización Rítmica (Maquinaria Sonora): El sistema no es una animación automática; "escucha" la música en tiempo real. Utilicé un mapeo de bandas de frecuencia (FFT) y amplitud:
+
+**Explicación de la relación audio-visual **
+
+Frecuencias Bajas (Bass): Mapeadas al tamaño de la luna y al grosor (strokeWeight) de las partículas. El bajo es el "pulso" físico de la pieza.
+
+Frecuencias Medias (Mid): Controlan la velocidad del viento y cuántas partículas nacen. A más intensidad en la voz o instrumentos medios, más poblado y rápido se vuelve el cielo.
+
+Frecuencias Altas (Treble): Afectan el brillo de las estrellas y el tamaño de los fuegos fatuos. Los agudos representan los destellos y detalles finos.
+
+** Evidencia del uso de IA**
+
+la ia se utilizo para general una primera vercion, en esa se trabajo y depues ayudo a optimizar y corregir unos errores 
+
+**Código fuente.**
+
+```js
+/**
+ * ACTIVIDAD 06: Instrumento Visual - Nod-Krai (Enjambre Cinético Mejorado)
+ */
+
+let particles = []; // Partículas activas
+let particlePool = []; // Piscina de reciclaje para optimizar memoria
+let flock = [];
+let stars = []; // Capa de estrellas de fondo
+let flowfield;
+let song, fft, amp;
+let resolution = 15;
+let maxParticles = 3500;
+
+let currentMoonCol, targetMoonCol;
+let moonColorIndex = 0;
+let moonPalette = [];
+
+let currentPartCol, targetPartCol;
+let partColorIndex = 0;
+let partPalette = [];
+
+let lerpSpeed = 0.05; 
+let explosionForce = 0; 
+
+function preload() {
+  song = loadSound('Nood Krai song.mp3'); 
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  fft = new p5.FFT();
+  amp = new p5.Amplitude();
+  flowfield = new FlowField(resolution);
+
+  // --- CONFIGURACIÓN DE PALETAS ---
+  moonPalette = [
+    color(255, 255, 250),
+    color(100, 200, 255),
+    color(200, 70, 80) 
+  ];
+  currentMoonCol = moonPalette[0];
+  targetMoonCol = moonPalette[0];
+
+  partPalette = [
+    color(0, 255, 200),
+    color(255, 100, 200),
+    color(255, 240, 150) 
+  ];
+  currentPartCol = partPalette[0];
+  targetPartCol = partPalette[0];
+
+  // --- INICIALIZACIÓN DE ELEMENTOS ---
+  
+  // 1. Estrellas de fondo (200 fijas)
+  for (let i = 0; i < 200; i++) {
+    stars.push(new Star());
+  }
+
+  // 2. Pool de Partículas Aurora
+  for (let i = 0; i < maxParticles; i++) {
+    particlePool.push(new AuroraParticle());
+  }
+  
+  for (let i = 0; i < 1000; i++) {
+    if (particlePool.length > 0) {
+      let p = particlePool.pop();
+      p.reset();
+      particles.push(p);
+    }
+  }
+  
+  // 3. Fuegos Fatuos (Flocking)
+  for (let i = 0; i < 80; i++) {
+    flock.push(new Wisp(random(width), random(height)));
+  }
+  
+  background(0);
+}
+
+function draw() {
+  fft.analyze();
+  let volume = amp.getLevel();
+  let bass = fft.getEnergy("bass");
+  let mid = fft.getEnergy("mid");
+  let treble = fft.getEnergy("treble");
+
+  currentMoonCol = lerpColor(currentMoonCol, targetMoonCol, lerpSpeed);
+  currentPartCol = lerpColor(currentPartCol, targetPartCol, lerpSpeed);
+
+  let backgroundAlpha = map(volume, 0, 0.5, 30, 15);
+  background(0, backgroundAlpha);
+
+  // --- 1. ESTRELLAS (FONDO) ---
+  for (let s of stars) {
+    s.show(treble);
+  }
+
+  // --- 2. LUNA ---
+  drawMoon(bass, volume);
+
+  flowfield.update(mid);
+
+  // --- 3. PARTÍCULAS AURORA (OBJECT POOLING) ---
+  let spawnRate = floor(map(mid, 100, 255, 0, 15, true));
+  for (let i = 0; i < spawnRate; i++) {
+    if (particlePool.length > 0) {
+      let p = particlePool.pop();
+      p.reset();
+      particles.push(p);
+    }
+  }
+  
+  while (particles.length > maxParticles) {
+    let oldParticle = particles.shift();
+    particlePool.push(oldParticle);
+  }
+
+  for (let p of particles) {
+    p.avoidMouse(); 
+    if (explosionForce > 0.1) p.explode(); 
+    p.follow(flowfield, volume);
+    p.update(volume);
+    p.show(bass, mid, currentPartCol);
+  }
+
+  // --- 4. FUEGOS FATUOS ---
+  for (let w of flock) {
+    w.avoidMouse(); 
+    if (explosionForce > 0.1) w.explode(); 
+    w.applyBehaviors(flock, treble);
+    w.update();
+    w.show(treble, bass);
+  }
+
+  explosionForce *= 0.9; 
+}
+
+// --- CLASE ESTRELLA ---
+class Star {
+  constructor() {
+    this.pos = createVector(random(width), random(height));
+    this.size = random(0.5, 2.5);
+    this.angle = random(TWO_PI); // Para el parpadeo
+  }
+
+  show(treble) {
+    this.angle += 0.05;
+    // El brillo base oscila y se intensifica con los agudos
+    let blink = map(sin(this.angle), -1, 1, 50, 200);
+    let musicBoost = map(treble, 0, 255, 0, 100);
+    
+    stroke(255, blink + musicBoost);
+    strokeWeight(this.size);
+    point(this.pos.x, this.pos.y);
+  }
+}
+
+// --- RESTO DE CLASES Y FUNCIONES ---
+
+function drawMoon(bass, vol) {
+  push();
+  translate(width / 2, height / 2);
+  let scaleFactor = map(vol, 0, 0.6, 1.1, 1.5);
+  let glowAlpha = map(vol, 0, 0.5, 20, 80); 
+  let glowSize = map(bass, 0, 255, 50, 200);
+  noStroke();
+  drawingContext.shadowBlur = glowSize / 3;
+  drawingContext.shadowColor = currentMoonCol;
+  fill(red(currentMoonCol), green(currentMoonCol), blue(currentMoonCol), glowAlpha);
+  ellipse(0, 0, (180 + glowSize) * scaleFactor);
+  fill(currentMoonCol);
+  ellipse(0, 0, 160 * scaleFactor); 
+  pop();
+}
+
+class AuroraParticle {
+  constructor() {
+    this.pos = createVector(0, 0);
+    this.vel = createVector(0, 0);
+    this.acc = createVector(0, 0);
+    this.maxSpeedBase = 2;
+  }
+  reset() {
+    this.pos.set(random(width), random(height));
+    this.vel.set(random(-1, 1), random(-1, 1));
+    this.acc.set(0, 0);
+  }
+  explode() {
+    let center = createVector(width/2, height/2);
+    let dir = p5.Vector.sub(this.pos, center);
+    let v = random(0.7, 1.3);
+    dir.setMag(explosionForce * 2 * v);
+    this.acc.add(dir);
+  }
+  avoidMouse() {
+    let m = createVector(mouseX, mouseY);
+    if (p5.Vector.dist(this.pos, m) < 150) {
+      this.acc.add(p5.Vector.sub(this.pos, m).setMag(0.8));
+    }
+  }
+  follow(field, vol) {
+    let force = field.lookup(this.pos);
+    force.mult(map(vol, 0, 0.5, 1, 3.5));
+    this.acc.add(force);
+  }
+  update(vol) {
+    let speedLimit = this.maxSpeedBase + map(vol, 0, 0.5, 0, 5);
+    this.vel.add(this.acc);
+    this.vel.limit(speedLimit);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+    this.edges();
+  }
+  show(bass, mid, col) {
+    let alpha = map(mid, 0, 255, 40, 200);
+    stroke(red(col), green(col), blue(col), alpha);
+    strokeWeight(map(bass, 0, 255, 0.5, 3.5));
+    point(this.pos.x, this.pos.y);
+  }
+  edges() {
+    if (this.pos.x > width) this.pos.x = 0; if (this.pos.x < 0) this.pos.x = width;
+    if (this.pos.y > height) this.pos.y = 0; if (this.pos.y < 0) this.pos.y = height;
+  }
+}
+
+class FlowField {
+  constructor(r) {
+    this.resolution = r;
+    this.cols = floor(width / r) + 1;
+    this.rows = floor(height / r) + 1;
+    this.field = new Array(this.cols * this.rows);
+    this.zoff = 0;
+  }
+  update(energy) {
+    let xoff = 0;
+    for (let i = 0; i < this.cols; i++) {
+      let yoff = 0;
+      for (let j = 0; j < this.rows; j++) {
+        let angle = noise(xoff, yoff, this.zoff) * TWO_PI * 2;
+        this.field[i + j * this.cols] = p5.Vector.fromAngle(angle).setMag(0.5);
+        yoff += 0.1;
+      }
+      xoff += 0.1;
+    }
+    this.zoff += map(energy, 0, 255, 0.005, 0.04);
+  }
+  lookup(lookup) {
+    let col = floor(constrain(lookup.x / this.resolution, 0, this.cols - 1));
+    let row = floor(constrain(lookup.y / this.resolution, 0, this.rows - 1));
+    return this.field[col + row * this.cols].copy();
+  }
+}
+
+class Wisp {
+  constructor(x, y) {
+    this.pos = createVector(x, y);
+    this.vel = p5.Vector.random2D();
+    this.acc = createVector(0, 0);
+    this.maxSpeed = 3.0;
+    this.maxForce = 0.1;
+  }
+  explode() {
+    let center = createVector(width/2, height/2);
+    let dir = p5.Vector.sub(this.pos, center);
+    dir.setMag(explosionForce * random(0.8, 1.2));
+    this.applyForce(dir);
+  }
+  avoidMouse() {
+    let m = createVector(mouseX, mouseY);
+    if (p5.Vector.dist(this.pos, m) < 120) {
+      this.applyForce(p5.Vector.sub(this.pos, m).setMag(0.6));
+    }
+  }
+  applyBehaviors(boids, energy) {
+    this.applyForce(this.separate(boids).mult(1.5));
+    this.applyForce(this.align(boids).mult(1.0));
+    this.applyForce(this.cohere(boids).mult(0.5));
+  }
+  applyForce(f) { this.acc.add(f); }
+  update() {
+    this.vel.add(this.acc);
+    this.vel.limit(this.maxSpeed);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+    this.borders();
+  }
+  show(treble, bass) {
+    let size = map(treble, 0, 255, 3, 10);
+    push();
+    noStroke();
+    fill(255, map(bass, 0, 255, 30, 80)); 
+    ellipse(this.pos.x, this.pos.y, size * 2.5);
+    fill(255, map(bass, 0, 255, 180, 255));
+    ellipse(this.pos.x, this.pos.y, size);
+    pop();
+  }
+  separate(boids) {
+    let steer = createVector(0, 0);
+    let count = 0;
+    for (let other of boids) {
+      let d = p5.Vector.dist(this.pos, other.pos);
+      if (d > 0 && d < 30) {
+        steer.add(p5.Vector.sub(this.pos, other.pos).normalize().div(d));
+        count++;
+      }
+    }
+    if (count > 0) steer.div(count);
+    if (steer.mag() > 0) steer.setMag(this.maxSpeed).sub(this.vel).limit(this.maxForce);
+    return steer;
+  }
+  align(boids) {
+    let sum = createVector(0, 0);
+    let count = 0;
+    for (let other of boids) {
+      let d = p5.Vector.dist(this.pos, other.pos);
+      if (d > 0 && d < 60) { sum.add(other.vel); count++; }
+    }
+    if (count > 0) return sum.div(count).setMag(this.maxSpeed).sub(this.vel).limit(this.maxForce);
+    return createVector(0, 0);
+  }
+  cohere(boids) {
+    let sum = createVector(0, 0);
+    let count = 0;
+    for (let other of boids) {
+      let d = p5.Vector.dist(this.pos, other.pos);
+      if (d > 0 && d < 60) { sum.add(other.pos); count++; }
+    }
+    if (count > 0) {
+      let desired = p5.Vector.sub(sum.div(count), this.pos).setMag(this.maxSpeed);
+      return p5.Vector.sub(desired, this.vel).limit(this.maxForce);
+    }
+    return createVector(0, 0);
+  }
+  borders() {
+    if (this.pos.x < 0) this.pos.x = width; if (this.pos.y < 0) this.pos.y = height;
+    if (this.pos.x > width) this.pos.x = 0; if (this.pos.y > height) this.pos.y = 0;
+  }
+}
+
+function keyPressed() {
+  if (keyCode === RIGHT_ARROW) {
+    moonColorIndex = (moonColorIndex + 1) % moonPalette.length;
+    targetMoonCol = moonPalette[moonColorIndex];
+  } else if (keyCode === LEFT_ARROW) {
+    moonColorIndex = (moonColorIndex - 1 + moonPalette.length) % moonPalette.length;
+    targetMoonCol = moonPalette[moonColorIndex];
+  }
+
+  if (key === ' ') explosionForce = 15; 
+
+  if (key === 'd' || key === 'D') {
+    partColorIndex = (partColorIndex + 1) % partPalette.length;
+    targetPartCol = partPalette[partColorIndex];
+  } else if (key === 'a' || key === 'A') {
+    partColorIndex = (partColorIndex - 1 + partPalette.length) % partPalette.length;
+    targetPartCol = partPalette[partColorIndex];
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  flowfield = new FlowField(resolution);
+}
+
+function mousePressed() {
+  song.isPlaying() ? song.pause() : song.play();
+}
+```
+
+**Enlace al sketch.**
+
+[Actividad 6](https://editor.p5js.org/Tomasm12/sketches/oMVjt-_RL)
+
+**Capturas o registros de momentos importantes de la pieza.**
+
+
+<img width="1244" height="1141" alt="image" src="https://github.com/user-attachments/assets/930cbcab-955a-4f83-9598-fbd131a2e1af" />
+<img width="1215" height="1125" alt="image" src="https://github.com/user-attachments/assets/0ec8db0f-15db-4e7f-8bb2-3bc0acd52ba7" />
+<img width="1221" height="1122" alt="image" src="https://github.com/user-attachments/assets/d12c81f8-70d8-4a9f-8b85-71b3b4ae442a" />
+
+
 ## Bitácora de reflexión
