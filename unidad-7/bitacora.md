@@ -333,4 +333,290 @@ Integrar las letras **G, T, A** como cuerpos rígidos estáticos para que sirvan
 ## Bitácora de aplicación 
 
 
+
+**Palabra elegida.**
+
+GOTA
+
+**Justificación conceptual.**
+
+La palabra GOTA se eligió porque está directamente relacionada con un sonido. El sonido de una gota es fácil de identificar y funciona bien para un proyecto que reacciona al audio.
+
+Además, la letra “O” permite simular visualmente el lugar donde cae una gota, ya que desde ella se pueden generar ondas, como cuando una gota impacta el agua.
+
+
+
+**Análisis de su significado visual y comportamental.**
+
+Visual: Se utiliza una tipografía Bold (negrita) para dar una sensación de peso físico inicial, que contrasta con el color azul traslúcido y las formas huecas (la 'O') que evocan fluidez y transparencia.
+
+Comportamental:
+
+Reposo: La palabra es estática pero "viva", reaccionando a la amplitud del audio.
+
+Caída: Pierde su estabilidad física (gravedad), transformándose de un objeto sólido a un elemento líquido que se tiñe de azul.
+
+Impacto: En lugar de simplemente desaparecer, la palabra tiene una "muerte" visual: explota en partículas y ondas, simulando la tensión superficial rompiéndose.
+
+**Moodboard o referencias.**
+
+<img width="1299" height="866" alt="image" src="https://github.com/user-attachments/assets/6e1dda4b-ab46-464e-8c81-08d5dac96327" />
+
+<img width="3000" height="2166" alt="image" src="https://github.com/user-attachments/assets/7a87ba6c-4046-4399-b53b-4d143b7e9f4b" />
+
+
+**Bocetos.**
+
+<img width="1313" height="734" alt="image" src="https://github.com/user-attachments/assets/59c6656c-cd12-4357-8fb3-0bf017ab26a2" />
+
+
+**Mapa de decisiones.**
+
+
+<img width="466" height="425" alt="image" src="https://github.com/user-attachments/assets/f0df6206-4c49-4848-b2b5-9e588e16eecf" />
+
+
+**Mapa de interpretación.**
+
+
+
+
+**Explicación de la relación entre audio y comportamiento.**
+
+Análisis de Amplitud: La función amplitud.getLevel() mapea el volumen del audio al radio de la letra 'O' y a la creación de ondas concéntricas.
+
+Sincronía: Si el sonido de la gota es fuerte, el pulso visual es mayor. Esto genera una conexión sinestésica donde el usuario "ve" el sonido golpeando la estructura de la palabra.
+
+**Evidencia del uso de IA.**
+
+Optimización de Código: Resolución de errores de "pantalla negra" mediante la gestión de estados físicos en Matter.js.
+
+Refactorización: Implementación de un sistema de reposicionamiento dinámico para asegurar que el diseño sea Responsive (se vea bien en Fullscreen).
+
+
+
+**Código fuente.**
+
+```javascript
+const { Engine, World, Bodies, Composite, Body } = Matter;
+
+let engine, world;
+let pistaAudio, amplitud;
+
+let letras = []; 
+let cuerpoO;
+let ondas = [];
+let gotasLluvia = [];
+let ultimoDisparo = 0;
+let cayendo = false; 
+let todasHanChocado = false;
+
+function preload() {
+  pistaAudio = loadSound('gotas.mp3');
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  engine = Engine.create();
+  world = engine.world;
+
+  pistaAudio.loop();
+  amplitud = new p5.Amplitude();
+
+  reiniciarTodoElSistema();
+}
+
+function reiniciarTodoElSistema() {
+  if (letras.length > 0) {
+    letras.forEach(l => Composite.remove(world, l.body));
+    Composite.remove(world, cuerpoO);
+  }
+  
+  let cx = width / 2;
+  let cy = height / 2;
+  
+  letras = [];
+  let datos = [
+    { txt: "G", offX: -280 }, 
+    { txt: "T", offX: 110 }, 
+    { txt: "A", offX: 290 }
+  ];
+
+  datos.forEach(d => {
+    let b = Bodies.rectangle(cx + d.offX, cy, 100, 150, { isStatic: true });
+    letras.push({ body: b, txt: d.txt, offX: d.offX, visible: true });
+    World.add(world, b);
+  });
+
+  cuerpoO = Bodies.circle(cx - 85, cy, 70, { isStatic: true });
+  cuerpoO.visible = true;
+  World.add(world, cuerpoO);
+  
+  cayendo = false;
+  todasHanChocado = false;
+}
+
+function draw() {
+  background(7, 8, 12);
+  Engine.update(engine);
+  let vol = amplitud.getLevel();
+
+  // 1. ONDAS DE LA 'O' CENTRAL
+  if (vol > 0.05 && millis() - ultimoDisparo > 400 && !cayendo) {
+    ondas.push({ x: cuerpoO.position.x, y: cuerpoO.position.y, radio: 130, alfa: 255, grosor: 4, tipo: 'centro' });
+    ultimoDisparo = millis();
+  }
+
+  // 2. DIBUJAR G, T, A
+  textAlign(CENTER, CENTER);
+  textStyle(BOLD);
+  textSize(160);
+  noStroke();
+
+  letras.forEach(l => {
+    if (l.visible) {
+      push();
+      translate(l.body.position.x, l.body.position.y);
+      rotate(l.body.angle);
+      fill(cayendo ? color(0, 140, 255) : 245); 
+      text(l.txt, 0, 0);
+      pop();
+
+      if (cayendo && l.body.position.y > height - 40) {
+        l.visible = false; 
+        crearOndaGrande(l.body.position.x, height - 10);
+        Body.setStatic(l.body, true);
+      }
+    }
+  });
+
+  // 3. DIBUJAR LA 'O'
+  if (cuerpoO.visible) {
+    let pulso = map(vol, 0, 0.5, 140, 160);
+    noFill();
+    stroke(0, 140, 255);
+    strokeWeight(10);
+    push();
+    translate(cuerpoO.position.x, cuerpoO.position.y);
+    rotate(cuerpoO.angle);
+    circle(0, 0, pulso);
+    pop();
+
+    if (cayendo && cuerpoO.position.y > height - 40) {
+      cuerpoO.visible = false;
+      crearOndaGrande(cuerpoO.position.x, height - 10);
+      Body.setStatic(cuerpoO, true);
+    }
+  }
+
+  dibujarOndas();
+  actualizarLluvia();
+  
+  let invisibles = letras.every(l => !l.visible) && !cuerpoO.visible;
+  if (invisibles && cayendo && !todasHanChocado) {
+    todasHanChocado = true; 
+    setTimeout(reiniciarTodoElSistema, 1200); 
+  }
+}
+
+function crearOndaGrande(x, y) {
+  ondas.push({ x: x, y: y, radio: 40, alfa: 255, grosor: 6, tipo: 'suelo' });
+  for (let i = 0; i < 15; i++) {
+    generarGota(x + random(-50, 50), y - 20, true);
+  }
+}
+
+function actualizarLluvia() {
+  stroke(0, 180, 255);
+  for (let i = gotasLluvia.length - 1; i >= 0; i--) {
+    let g = gotasLluvia[i];
+    strokeWeight(g.circleRadius);
+    line(g.position.x, g.position.y, g.position.x, g.position.y - (g.velocity.y * 1.5));
+
+    if (g.position.y > height) {
+      ondas.push({ x: g.position.x, y: height - 5, radio: 10, alfa: 255, grosor: 2, tipo: 'suelo' });
+      Composite.remove(world, g);
+      gotasLluvia.splice(i, 1);
+    }
+  }
+}
+
+function dibujarOndas() {
+  for (let i = ondas.length - 1; i >= 0; i--) {
+    let o = ondas[i];
+    noFill();
+    stroke(0, 180, 255, o.alfa);
+    strokeWeight(o.grosor);
+    if (o.tipo === 'centro') circle(o.x, o.y, o.radio);
+    else ellipse(o.x, o.y, o.radio, o.radio * 0.4);
+    o.radio += 6;
+    o.alfa -= 6;
+    if (o.alfa <= 0) ondas.splice(i, 1);
+  }
+}
+
+function keyPressed() {
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+
+  if (key === 'f' || key === 'F') fullscreen(!fullscreen());
+
+  // A y D: AHORA FUNCIONAN DE NUEVO
+  if (key === 'a' || key === 'A' || key === 'd' || key === 'D') {
+    let cx = width / 2;
+    // Buscamos la posición de la G (izquierda) o la A (derecha)
+    let xBase = (key === 'a' || key === 'A') ? cx - 280 : cx + 290;
+    for (let i = 0; i < 10; i++) {
+      generarGota(xBase + random(-40, 40), height / 2 + 50, false);
+    }
+  }
+
+  // S: TORMENTA + CAÍDA
+  if ((key === 's' || key === 'S') && !cayendo) {
+    cayendo = true;
+    letras.forEach(l => Body.setStatic(l.body, false));
+    Body.setStatic(cuerpoO, false);
+    for (let i = 0; i < 100; i++) {
+      generarGota(random(width), random(-1000, 0), false);
+    }
+  }
+}
+
+function generarGota(x, y, esSalpicadura) {
+  let g = Bodies.circle(x, y, random(2, 5), { 
+    restitution: 0.3, 
+    frictionAir: 0.01 
+  });
+  
+  // Si es salpicadura (al chocar), sale disparada hacia arriba
+  if (esSalpicadura) {
+    Body.setVelocity(g, { x: random(-3, 3), y: random(-8, -12) });
+  }
+  
+  gotasLluvia.push(g);
+  World.add(world, g);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  if (!cayendo) reiniciarTodoElSistema();
+}
+```
+
+**Enlace al sketch.**
+
+[Enlace ED applay]([asdad](https://editor.p5js.org/Tomasm12/sketches/C95VdDS_l)
+
+
+
+**Capturas o registros de la pieza.**
+
+<img width="2559" height="1315" alt="image" src="https://github.com/user-attachments/assets/c5e87305-7409-45a2-a285-0f7537fa16c9" />
+
+<img width="1016" height="820" alt="image" src="https://github.com/user-attachments/assets/9ee50a8a-f133-47da-90af-bb1305d3c831" />
+
+
+<img width="1108" height="675" alt="image" src="https://github.com/user-attachments/assets/8e9fc90b-6238-493b-b58b-0d74461b8861" />
+
 ## Bitácora de reflexión
