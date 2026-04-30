@@ -606,7 +606,7 @@ function windowResized() {
 
 **Enlace al sketch.**
 
-[Enlace ED applay]([asdad](https://editor.p5js.org/Tomasm12/sketches/C95VdDS_l)
+[Enlace ED applay](https://editor.p5js.org/Tomasm12/sketches/C95VdDS_l)
 
 
 
